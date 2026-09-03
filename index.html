@@ -1,0 +1,640 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Farm Expense Tracker - Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #15803d;
+            --primary-hover: #166534;
+            --primary-soft: #f0fdf4;
+            --danger: #dc2626;
+            --danger-hover: #b91c1c;
+            --danger-soft: #fef2f2;
+            --bg: #f8fafc;
+            --card: #ffffff;
+            --text-dark: #0f172a;
+            --text-muted: #64748b;
+            --border: #e2e8f0;
+            --radius-lg: 14px;
+            --radius-md: 8px;
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.04), 0 2px 4px -2px rgba(0, 0, 0, 0.04);
+            --shadow-md: 0 10px 15px -3px rgba(0, 0, 0, 0.06), 0 4px 6px -4px rgba(0, 0, 0, 0.04);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg);
+            color: var(--text-dark);
+            padding-bottom: 60px;
+            line-height: 1.5;
+        }
+
+        .navbar {
+            background: var(--card);
+            border-bottom: 1px solid var(--border);
+            padding: 14px 28px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .nav-brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .brand-icon {
+            font-size: 26px;
+            background: var(--primary-soft);
+            width: 44px;
+            height: 44px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 10px;
+        }
+
+        .nav-brand h2 {
+            font-size: 18px;
+            font-weight: 800;
+        }
+
+        .nav-brand .subtitle {
+            font-size: 12px;
+            color: var(--text-muted);
+            font-weight: 500;
+        }
+
+        .nav-right {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .total-expense-card {
+            background: linear-gradient(135deg, #15803d 0%, #14532d 100%);
+            color: #ffffff;
+            padding: 8px 18px;
+            border-radius: var(--radius-md);
+            text-align: right;
+            box-shadow: 0 4px 12px rgba(21, 128, 61, 0.25);
+        }
+
+        .total-expense-card .label {
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.6px;
+            display: block;
+            opacity: 0.85;
+            font-weight: 600;
+        }
+
+        .total-expense-card .amount {
+            font-size: 20px;
+            font-weight: 800;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 28px auto;
+            padding: 0 20px;
+        }
+
+        .card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            padding: 24px;
+            margin-bottom: 24px;
+            box-shadow: var(--shadow);
+        }
+
+        .section-title {
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .crop-form {
+            display: grid;
+            grid-template-columns: 2fr 2fr 1fr;
+            gap: 14px;
+            align-items: flex-end;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        label {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text-muted);
+            text-transform: uppercase;
+        }
+
+        input {
+            padding: 10px 14px;
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md);
+            font-size: 14px;
+            outline: none;
+            background: #ffffff;
+            width: 100%;
+        }
+
+        input:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(21, 128, 61, 0.12);
+        }
+
+        .btn {
+            padding: 10px 18px;
+            border-radius: var(--radius-md);
+            border: none;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: #ffffff;
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-hover);
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 1px solid var(--border);
+            color: var(--text-dark);
+        }
+
+        .btn-outline:hover {
+            background: #f1f5f9;
+        }
+
+        .btn-danger {
+            background: var(--danger-soft);
+            color: var(--danger);
+        }
+
+        .btn-danger:hover {
+            background: var(--danger);
+            color: #ffffff;
+        }
+
+        .btn-sm {
+            padding: 6px 12px;
+            font-size: 12px;
+        }
+
+        .btn-icon-danger {
+            background: transparent;
+            border: none;
+            color: var(--danger);
+            cursor: pointer;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 13px;
+            transition: background 0.2s;
+        }
+
+        .btn-icon-danger:hover {
+            background: var(--danger-soft);
+        }
+
+        .crops-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
+            gap: 20px;
+        }
+
+        .crop-card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            padding: 20px;
+            box-shadow: var(--shadow);
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .crop-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 12px;
+        }
+
+        .crop-header h4 {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .crop-header span {
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        .crop-total {
+            text-align: right;
+        }
+
+        .crop-total .sub {
+            font-size: 10px;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            font-weight: 600;
+        }
+
+        .crop-total .cost {
+            font-size: 17px;
+            font-weight: 800;
+            color: var(--text-dark);
+        }
+
+        .custom-expense-form {
+            background: #f8fafc;
+            padding: 12px;
+            border-radius: var(--radius-md);
+            border: 1px dashed var(--border);
+        }
+
+        .expense-inputs-row {
+            display: grid;
+            grid-template-columns: 1.8fr 1fr 1.3fr auto;
+            gap: 8px;
+            align-items: center;
+        }
+
+        .custom-expense-form input {
+            padding: 8px 10px;
+            font-size: 13px;
+        }
+
+        .expense-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+        }
+
+        .expense-table th {
+            text-align: left;
+            color: var(--text-muted);
+            font-size: 11px;
+            text-transform: uppercase;
+            padding: 6px 8px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .expense-table td {
+            padding: 8px;
+            border-bottom: 1px solid #f1f5f9;
+        }
+
+        .history-tag {
+            background: #fee2e2;
+            color: var(--danger);
+            font-size: 11px;
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-weight: 700;
+        }
+
+        .empty-state {
+            color: var(--text-muted);
+            font-size: 14px;
+            text-align: center;
+            padding: 36px 20px;
+            background: #ffffff;
+            border: 1px dashed var(--border);
+            border-radius: var(--radius-lg);
+            grid-column: 1 / -1;
+        }
+
+        @media (max-width: 768px) {
+            .navbar { flex-direction: column; gap: 12px; align-items: flex-start; }
+            .nav-right { width: 100%; justify-content: space-between; }
+            .crop-form { grid-template-columns: 1fr; }
+            .expense-inputs-row { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+    <header class="navbar">
+        <div class="nav-brand">
+            <div class="brand-icon">🌾</div>
+            <div>
+                <h2>KrishiKosh</h2>
+                <span class="subtitle">Welcome, {{ user_name }}</span>
+            </div>
+        </div>
+
+        <div class="nav-right">
+            <div class="total-expense-card">
+                <span class="label">Total Active Expenses</span>
+                <span class="amount" id="topGrandTotal">₹ 0.00</span>
+            </div>
+            <button class="btn btn-outline" id="toggleHistoryBtn" onclick="toggleHistoryView()">📜 View Crop History</button>
+            <a href="/logout" class="btn btn-sm btn-danger">🚪 Logout</a>
+        </div>
+    </header>
+
+    <main class="container">
+        <section class="card" id="cropCreationSection">
+            <h3 style="font-size: 16px; margin-bottom: 14px; font-weight: 700;">+ Add New Crop Field</h3>
+            <form id="addCropForm" class="crop-form">
+                <div class="form-group">
+                    <label>Crop Name *</label>
+                    <input type="text" id="cropName" placeholder="Enter crop name (e.g. Cotton, Wheat, Sugarcane)" required>
+                </div>
+                <div class="form-group">
+                    <label>Field / Plot Location</label>
+                    <input type="text" id="fieldName" placeholder="Enter field / plot name" required>
+                </div>
+                <button type="submit" class="btn btn-primary">+ Add Crop</button>
+            </form>
+        </section>
+
+        <section id="activeCropsSection">
+            <div class="section-title">
+                <span>Active Crops</span>
+            </div>
+            <div id="cropsContainer" class="crops-grid"></div>
+        </section>
+
+        <section id="historySection" style="display: none;">
+            <div class="section-title">
+                <span>Archived Crops & Past History</span>
+                <button class="btn btn-sm btn-outline" onclick="toggleHistoryView()">← Back to Dashboard</button>
+            </div>
+            <div id="historyContainer" class="crops-grid"></div>
+        </section>
+    </main>
+
+    <script>
+        let isHistoryOpen = false;
+
+        document.addEventListener("DOMContentLoaded", () => {
+            loadActiveCrops();
+
+            document.getElementById("addCropForm").addEventListener("submit", async (e) => {
+                e.preventDefault();
+                const cropName = document.getElementById("cropName").value.trim();
+                const fieldName = document.getElementById("fieldName").value.trim();
+
+                if (!cropName) return;
+
+                const res = await fetch("/api/crops", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ crop_name: cropName, field_name: fieldName })
+                });
+
+                const data = await res.json();
+
+                if (res.status === 409) {
+                    alert(data.error);
+                    return;
+                }
+
+                if (res.ok) {
+                    document.getElementById("addCropForm").reset();
+                    loadActiveCrops();
+                } else {
+                    alert(data.error || "An error occurred while adding the crop.");
+                }
+            });
+        });
+
+        async function loadActiveCrops() {
+            try {
+                const res = await fetch("/api/crops");
+                if (res.redirected) {
+                    window.location.href = res.url;
+                    return;
+                }
+                const data = await res.json();
+
+                document.getElementById("topGrandTotal").innerText = `₹ ${Number(data.grand_total || 0).toLocaleString('en-IN', { minimumFractionDigits: 2 })}`;
+
+                const container = document.getElementById("cropsContainer");
+                container.innerHTML = "";
+
+                if (!data.crops || data.crops.length === 0) {
+                    container.innerHTML = `<div class="empty-state">No crops added yet. Enter your crop name above and click <strong>+ Add Crop</strong> to start tracking.</div>`;
+                    return;
+                }
+
+                data.crops.forEach(crop => {
+                    container.appendChild(createCropCard(crop, false));
+                });
+            } catch (err) {
+                console.error("Error loading crops:", err);
+            }
+        }
+
+        async function loadHistoryCrops() {
+            try {
+                const res = await fetch("/api/crops/history");
+                const data = await res.json();
+
+                const container = document.getElementById("historyContainer");
+                container.innerHTML = "";
+
+                if (!data.history || data.history.length === 0) {
+                    container.innerHTML = `<div class="empty-state">No deleted or archived crops found in your history log.</div>`;
+                    return;
+                }
+
+                data.history.forEach(crop => {
+                    container.appendChild(createCropCard(crop, true));
+                });
+            } catch (err) {
+                console.error("Error loading history:", err);
+            }
+        }
+
+        function createCropCard(crop, isHistory) {
+            const card = document.createElement("div");
+            card.className = "crop-card";
+
+            const expenseRows = (crop.expenses || []).map(exp => `
+                <tr>
+                    <td><strong>${exp.expense_name}</strong></td>
+                    <td>${exp.expense_date}</td>
+                    <td style="text-align: right; font-weight: 700;">₹ ${Number(exp.cost).toLocaleString('en-IN', { minimumFractionDigits: 2 })}</td>
+                    ${!isHistory ? `
+                    <td style="text-align: center; width: 40px;">
+                        <button class="btn-icon-danger" title="Delete Expense" onclick="deleteExpense(${exp.expense_id}, '${exp.expense_name}')">🗑️</button>
+                    </td>` : ''}
+                </tr>
+            `).join("");
+
+            const customExpenseFormHtml = isHistory ? "" : `
+                <form class="custom-expense-form" onsubmit="addExpense(event, ${crop.crop_id})">
+                    <div class="expense-inputs-row">
+                        <input type="text" placeholder="Expense name (Farmer enters)" required id="name_${crop.crop_id}">
+                        <input type="number" step="0.01" min="0" placeholder="Cost ₹" required id="cost_${crop.crop_id}">
+                        <input type="date" value="${new Date().toISOString().split('T')[0]}" required id="date_${crop.crop_id}">
+                        <button type="submit" class="btn btn-sm btn-primary">+ Add</button>
+                    </div>
+                </form>
+            `;
+
+            const actionBtnHtml = isHistory
+                ? `<span class="history-tag">Preserved in History</span>`
+                : `<button class="btn btn-sm btn-danger" onclick="deleteCrop(${crop.crop_id}, '${crop.crop_name}')">🗑️ Delete Crop</button>`;
+
+            card.innerHTML = `
+                <div class="crop-header">
+                    <div>
+                        <h4>${crop.crop_name}</h4>
+                        <span>${crop.field_name || 'General Plot'}</span>
+                    </div>
+                    <div class="crop-total">
+                        <div class="sub">Total Exp.</div>
+                        <div class="cost">₹ ${Number(crop.total_cost || 0).toLocaleString('en-IN', { minimumFractionDigits: 2 })}</div>
+                    </div>
+                </div>
+
+                ${customExpenseFormHtml}
+
+                <div style="overflow-x: auto;">
+                    <table class="expense-table">
+                        <thead>
+                            <tr>
+                                <th>Expense Name</th>
+                                <th>Date</th>
+                                <th style="text-align: right;">Cost</th>
+                                ${!isHistory ? `<th style="text-align: center;">Action</th>` : ''}
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${expenseRows.length ? expenseRows : `<tr><td colspan="${isHistory ? 3 : 4}" style="text-align:center; color:#94a3b8; padding: 12px;">No expenses added yet.</td></tr>`}
+                        </tbody>
+                    </table>
+                </div>
+
+                <div style="display: flex; justify-content: flex-end; margin-top: auto; padding-top: 6px;">
+                    ${actionBtnHtml}
+                </div>
+            `;
+
+            return card;
+        }
+
+        async function addExpense(event, cropId) {
+            event.preventDefault();
+            const nameInput = document.getElementById(`name_${cropId}`);
+            const costInput = document.getElementById(`cost_${cropId}`);
+            const dateInput = document.getElementById(`date_${cropId}`);
+
+            const res = await fetch("/api/expenses", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    crop_id: cropId,
+                    expense_name: nameInput.value.trim(),
+                    cost: parseFloat(costInput.value),
+                    expense_date: dateInput.value
+                })
+            });
+
+            if (res.ok) {
+                loadActiveCrops();
+            } else {
+                const err = await res.json();
+                alert(err.error || "Failed to add expense.");
+            }
+        }
+
+        async function deleteExpense(expenseId, expenseName) {
+            if (!confirm(`Are you sure you want to delete expense "${expenseName}"?`)) {
+                return;
+            }
+
+            try {
+                const res = await fetch(`/api/expenses/${expenseId}`, {
+                    method: "DELETE"
+                });
+
+                if (res.ok) {
+                    loadActiveCrops();
+                } else {
+                    const err = await res.json();
+                    alert(err.error || "Failed to delete expense.");
+                }
+            } catch (err) {
+                console.error("Error deleting expense:", err);
+                alert("Failed to delete expense due to a network error.");
+            }
+        }
+
+        async function deleteCrop(cropId, cropName) {
+            if (confirm(`Remove "${cropName}" from active crops? It will remain safely saved in your database history.`)) {
+                const res = await fetch(`/api/crops/${cropId}`, { method: "DELETE" });
+                if (res.ok) {
+                    loadActiveCrops();
+                } else {
+                    const err = await res.json();
+                    alert(err.error || "Failed to delete crop.");
+                }
+            }
+        }
+
+        function toggleHistoryView() {
+            isHistoryOpen = !isHistoryOpen;
+            const activeSection = document.getElementById("activeCropsSection");
+            const cropCreationSection = document.getElementById("cropCreationSection");
+            const historySection = document.getElementById("historySection");
+            const toggleBtn = document.getElementById("toggleHistoryBtn");
+
+            if (isHistoryOpen) {
+                activeSection.style.display = "none";
+                cropCreationSection.style.display = "none";
+                historySection.style.display = "block";
+                toggleBtn.innerText = "← Active Dashboard";
+                loadHistoryCrops();
+            } else {
+                activeSection.style.display = "block";
+                cropCreationSection.style.display = "block";
+                historySection.style.display = "none";
+                toggleBtn.innerText = "📜 View Crop History";
+                loadActiveCrops();
+            }
+        }
+    </script>
+</body>
+</html>

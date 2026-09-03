@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KrishiKosh - Admin Panel</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #15803d;
+            --primary-soft: #f0fdf4;
+            --danger: #dc2626;
+            --danger-soft: #fef2f2;
+            --bg: #f8fafc;
+            --card: #ffffff;
+            --text-dark: #0f172a;
+            --text-muted: #64748b;
+            --border: #e2e8f0;
+            --radius: 12px;
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.04);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg);
+            color: var(--text-dark);
+            padding-bottom: 60px;
+        }
+
+        .navbar {
+            background: var(--card);
+            border-bottom: 1px solid var(--border);
+            padding: 14px 28px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .nav-brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .brand-badge {
+            background: #ef4444;
+            color: #ffffff;
+            font-size: 11px;
+            padding: 3px 8px;
+            border-radius: 6px;
+            font-weight: 800;
+            text-transform: uppercase;
+        }
+
+        .btn-danger {
+            background: var(--danger-soft);
+            color: var(--danger);
+            border: 1px solid #fecaca;
+            padding: 7px 14px;
+            border-radius: 8px;
+            font-weight: 700;
+            font-size: 13px;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .btn-danger:hover {
+            background: var(--danger);
+            color: #ffffff;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 28px auto;
+            padding: 0 20px;
+        }
+
+        .admin-header {
+            margin-bottom: 24px;
+        }
+
+        .farmer-card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            margin-bottom: 20px;
+            overflow: hidden;
+        }
+
+        .farmer-top {
+            padding: 16px 20px;
+            background: #f8fafc;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .farmer-details h3 {
+            font-size: 16px;
+            font-weight: 800;
+            color: var(--text-dark);
+        }
+
+        .farmer-details span {
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+
+        .crops-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+        }
+
+        .crops-table th {
+            text-align: left;
+            padding: 10px 20px;
+            background: #ffffff;
+            color: var(--text-muted);
+            font-size: 11px;
+            text-transform: uppercase;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .crops-table td {
+            padding: 12px 20px;
+            border-bottom: 1px solid #f1f5f9;
+        }
+
+        .status-badge {
+            padding: 3px 8px;
+            border-radius: 6px;
+            font-size: 11px;
+            font-weight: 700;
+        }
+
+        .status-active {
+            background: #dcfce7;
+            color: var(--primary);
+        }
+
+        .status-archived {
+            background: #f1f5f9;
+            color: var(--text-muted);
+        }
+    </style>
+</head>
+<body>
+
+    <header class="navbar">
+        <div class="nav-brand">
+            <h2 style="font-size: 18px; font-weight: 800;">KrishiKosh</h2>
+            <span class="brand-badge">Admin Panel</span>
+        </div>
+        <div>
+            <a href="/logout" class="btn-danger">🚪 Logout Admin</a>
+        </div>
+    </header>
+
+    <main class="container">
+        <div class="admin-header">
+            <h2 style="font-size: 20px; font-weight: 800;">Farmer Accounts & All Crops</h2>
+            <p style="font-size: 13px; color: var(--text-muted);">Manage registered farmers and monitor their farm data.</p>
+        </div>
+
+        <div id="farmersList"></div>
+    </main>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", loadFarmersData);
+
+        async function loadFarmersData() {
+            const container = document.getElementById("farmersList");
+            try {
+                const res = await fetch("/api/admin/farmers");
+                if (res.redirected) {
+                    window.location.href = res.url;
+                    return;
+                }
+                const data = await res.json();
+
+                container.innerHTML = "";
+
+                if (!data.farmers || data.farmers.length === 0) {
+                    container.innerHTML = `<p style="color: var(--text-muted); text-align: center; padding: 40px;">No registered farmers found.</p>`;
+                    return;
+                }
+
+                data.farmers.forEach(farmer => {
+                    const card = document.createElement("div");
+                    card.className = "farmer-card";
+
+                    const cropRows = farmer.crops.map(c => `
+                        <tr>
+                            <td><strong>${c.crop_name}</strong></td>
+                            <td>${c.field_name}</td>
+                            <td>
+                                <span class="status-badge ${c.is_active === 1 ? 'status-active' : 'status-archived'}">
+                                    ${c.is_active === 1 ? 'Active' : 'Archived'}
+                                </span>
+                            </td>
+                            <td style="text-align: right; font-weight: 700;">₹ ${Number(c.total_cost).toLocaleString('en-IN', { minimumFractionDigits: 2 })}</td>
+                        </tr>
+                    `).join("");
+
+                    card.innerHTML = `
+                        <div class="farmer-top">
+                            <div class="farmer-details">
+                                <h3>👨‍🌾 ${farmer.full_name}</h3>
+                                <span>📱 Mobile: ${farmer.mobile_no}</span>
+                            </div>
+                            <button class="btn-danger" onclick="deleteFarmer(${farmer.user_id}, '${farmer.full_name}')">
+                                🗑️ Delete Farmer
+                            </button>
+                        </div>
+                        <table class="crops-table">
+                            <thead>
+                                <tr>
+                                    <th>Crop Name</th>
+                                    <th>Field</th>
+                                    <th>Status</th>
+                                    <th style="text-align: right;">Total Expense</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                ${farmer.crops.length ? cropRows : `<tr><td colspan="4" style="text-align: center; color: var(--text-muted); padding: 14px;">No crops tracked by this farmer yet.</td></tr>`}
+                            </tbody>
+                        </table>
+                    `;
+
+                    container.appendChild(card);
+                });
+            } catch (err) {
+                console.error(err);
+                container.innerHTML = `<p style="color: red; text-align: center;">Error loading data.</p>`;
+            }
+        }
+
+        async function deleteFarmer(userId, farmerName) {
+            if (!confirm(`Are you sure you want to permanently delete farmer "${farmerName}" and all of their crops and expenses?`)) {
+                return;
+            }
+
+            try {
+                const res = await fetch(`/api/admin/farmers/${userId}`, { method: "DELETE" });
+                if (res.ok) {
+                    alert("Farmer deleted successfully.");
+                    loadFarmersData();
+                } else {
+                    const err = await res.json();
+                    alert(err.error || "Failed to delete farmer.");
+                }
+            } catch (err) {
+                alert("Network error while deleting farmer.");
+            }
+        }
+    </script>
+</body>
+</html>

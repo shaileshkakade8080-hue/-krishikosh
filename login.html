@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KrishiKosh - Farmer Login & Register</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #15803d;
+            --primary-hover: #166534;
+            --primary-soft: #f0fdf4;
+            --bg: #f8fafc;
+            --card: #ffffff;
+            --text-dark: #0f172a;
+            --text-muted: #64748b;
+            --border: #e2e8f0;
+            --radius: 14px;
+            --shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.08);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .auth-container {
+            width: 100%;
+            max-width: 440px;
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            padding: 32px;
+        }
+
+        .brand-header {
+            text-align: center;
+            margin-bottom: 24px;
+        }
+
+        .brand-icon {
+            font-size: 32px;
+            background: var(--primary-soft);
+            width: 54px;
+            height: 54px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 12px;
+            margin-bottom: 10px;
+        }
+
+        .brand-header h2 {
+            font-size: 22px;
+            font-weight: 800;
+            color: var(--text-dark);
+        }
+
+        .brand-header p {
+            font-size: 13px;
+            color: var(--text-muted);
+            margin-top: 4px;
+        }
+
+        .tabs {
+            display: flex;
+            background: #f1f5f9;
+            padding: 4px;
+            border-radius: 10px;
+            margin-bottom: 24px;
+        }
+
+        .tab-btn {
+            flex: 1;
+            padding: 9px;
+            border: none;
+            background: transparent;
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--text-muted);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: 0.2s ease;
+        }
+
+        .tab-btn.active {
+            background: #ffffff;
+            color: var(--primary);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        }
+
+        .auth-form {
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .form-options {
+            display: flex;
+            justify-content: flex-end;
+            margin-top: -4px;
+        }
+
+        .forgot-link {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--primary);
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        .forgot-link:hover {
+            text-decoration: underline;
+        }
+
+        label {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text-muted);
+            text-transform: uppercase;
+        }
+
+        input {
+            padding: 11px 14px;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            font-size: 14px;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        input:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(21, 128, 61, 0.12);
+        }
+
+        .btn-submit {
+            background: var(--primary);
+            color: #ffffff;
+            border: none;
+            padding: 12px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 700;
+            cursor: pointer;
+            margin-top: 6px;
+            transition: background 0.2s;
+        }
+
+        .btn-submit:hover {
+            background: var(--primary-hover);
+        }
+
+        .btn-submit:disabled {
+            background: #94a3b8;
+            cursor: not-allowed;
+        }
+
+        .btn-secondary {
+            background: transparent;
+            color: var(--text-muted);
+            border: 1px solid var(--border);
+            padding: 10px;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            text-align: center;
+        }
+
+        .btn-secondary:hover {
+            background: #f1f5f9;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="auth-container">
+        <div class="brand-header">
+            <div class="brand-icon">🌾</div>
+            <h2>KrishiKosh</h2>
+            <p>Smart Farm Expense & Yield Ledger</p>
+        </div>
+
+        <div class="tabs" id="tabContainer">
+            <button class="tab-btn active" id="loginTabBtn" onclick="showTab('login')">Farmer Login</button>
+            <button class="tab-btn" id="regTabBtn" onclick="showTab('register')">New Registration</button>
+        </div>
+
+        <!-- 1. Login Form -->
+        <form id="loginForm" class="auth-form" onsubmit="handleLogin(event)">
+            <div class="form-group">
+                <label>Mobile Number</label>
+                <input type="text" id="loginMobile" placeholder="e.g. 9876543210" required>
+            </div>
+            <div class="form-group">
+                <label>Password</label>
+                <input type="password" id="loginPassword" placeholder="Enter password" required>
+            </div>
+            <div class="form-options">
+                <span class="forgot-link" onclick="showTab('forgot')">Forgot Password?</span>
+            </div>
+            <button type="submit" class="btn-submit">Login to Dashboard</button>
+        </form>
+
+        <!-- 2. Register Form -->
+        <form id="registerForm" class="auth-form" style="display: none;" onsubmit="handleRegister(event)">
+            <div class="form-group">
+                <label>Farmer Full Name</label>
+                <input type="text" id="regName" placeholder="e.g. Ramesh Patil" required>
+            </div>
+            <div class="form-group">
+                <label>Mobile Number</label>
+                <input type="text" id="regMobile" placeholder="10-digit mobile number" required>
+            </div>
+            <div class="form-group">
+                <label>Password</label>
+                <input type="password" id="regPassword" placeholder="Create strong password" required>
+            </div>
+            <button type="submit" class="btn-submit">Register Account</button>
+        </form>
+
+        <!-- 3. Forgot / Reset Password Form -->
+        <form id="forgotForm" class="auth-form" style="display: none;" onsubmit="handleResetPassword(event)">
+            <div style="text-align: center; margin-bottom: 6px;">
+                <h4 style="font-size: 15px; color: var(--text-dark);">Reset Password</h4>
+                <p style="font-size: 12px; color: var(--text-muted);">Enter your registered mobile number and new password</p>
+            </div>
+            <div class="form-group">
+                <label>Registered Mobile Number</label>
+                <input type="text" id="resetMobile" placeholder="10-digit mobile number" required>
+            </div>
+            <div class="form-group">
+                <label>New Password</label>
+                <input type="password" id="resetNewPassword" placeholder="Enter new password" required>
+            </div>
+            <div class="form-group">
+                <label>Confirm New Password</label>
+                <input type="password" id="resetConfirmPassword" placeholder="Confirm new password" required>
+            </div>
+            <button type="submit" class="btn-submit">Update Password</button>
+            <button type="button" class="btn-secondary" onclick="showTab('login')">← Back to Login</button>
+        </form>
+    </div>
+
+    <script>
+        function showTab(tab) {
+            const loginForm = document.getElementById("loginForm");
+            const regForm = document.getElementById("registerForm");
+            const forgotForm = document.getElementById("forgotForm");
+            const tabContainer = document.getElementById("tabContainer");
+            const loginBtn = document.getElementById("loginTabBtn");
+            const regBtn = document.getElementById("regTabBtn");
+
+            // Hide all
+            loginForm.style.display = "none";
+            regForm.style.display = "none";
+            forgotForm.style.display = "none";
+            tabContainer.style.display = "flex";
+
+            if (tab === 'login') {
+                loginForm.style.display = "flex";
+                loginBtn.classList.add("active");
+                regBtn.classList.remove("active");
+            } else if (tab === 'register') {
+                regForm.style.display = "flex";
+                regBtn.classList.add("active");
+                loginBtn.classList.remove("active");
+            } else if (tab === 'forgot') {
+                forgotForm.style.display = "flex";
+                tabContainer.style.display = "none";
+            }
+        }
+
+        async function handleLogin(e) {
+            e.preventDefault();
+            const submitBtn = e.target.querySelector('button[type="submit"]');
+            const mobile = document.getElementById("loginMobile").value.trim();
+            const password = document.getElementById("loginPassword").value;
+
+            if (!mobile || !password) {
+                alert("Please enter both mobile number and password.");
+                return;
+            }
+
+            try {
+                if (submitBtn) submitBtn.disabled = true;
+
+                const res = await fetch("/api/auth/login", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ mobile_no: mobile, password: password })
+                });
+
+                const data = await res.json();
+
+                if (res.ok) {
+                    window.location.href = data.redirect || "/dashboard";
+                } else {
+                    alert(data.error || "Invalid mobile number or password.");
+                }
+            } catch (err) {
+                console.error("Login request failed:", err);
+                alert("Could not connect to the server. Please check your connection and try again.");
+            } finally {
+                if (submitBtn) submitBtn.disabled = false;
+            }
+        }
+
+        async function handleRegister(e) {
+            e.preventDefault();
+            const name = document.getElementById("regName").value.trim();
+            const mobile = document.getElementById("regMobile").value.trim();
+            const password = document.getElementById("regPassword").value;
+
+            const res = await fetch("/api/auth/register", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ full_name: name, mobile_no: mobile, password: password })
+            });
+
+            const data = await res.json();
+            if (res.ok) {
+                alert("Account created successfully! Please login.");
+                showTab('login');
+            } else {
+                alert(data.error || "Failed to create account.");
+            }
+        }
+
+        async function handleResetPassword(e) {
+            e.preventDefault();
+            const mobile = document.getElementById("resetMobile").value.trim();
+            const newPassword = document.getElementById("resetNewPassword").value;
+            const confirmPassword = document.getElementById("resetConfirmPassword").value;
+
+            if (newPassword !== confirmPassword) {
+                alert("New passwords do not match!");
+                return;
+            }
+
+            const res = await fetch("/api/auth/reset-password", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ mobile_no: mobile, new_password: newPassword })
+            });
+
+            const data = await res.json();
+            if (res.ok) {
+                alert("Password reset successfully! You can now log in with your new password.");
+                showTab('login');
+            } else {
+                alert(data.error || "Failed to reset password.");
+            }
+        }
+    </script>
+</body>
+</html>
